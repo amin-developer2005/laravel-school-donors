@@ -16,8 +16,9 @@ class Degree extends Model
 
     public $timestamps = false;
 
-    public function donor()
-    {
 
+    public function donors(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Donor::class);
     }
 }

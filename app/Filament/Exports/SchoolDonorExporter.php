@@ -10,7 +10,7 @@ use Filament\Actions\Exports\Models\Export;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
 
-class DonorExporter extends Exporter
+class SchoolDonorExporter extends Exporter
 {
     protected static ?string $model = Donor::class;
     private string $disk {
@@ -29,8 +29,7 @@ class DonorExporter extends Exporter
     public static function getColumns(): array
     {
         return [
-            ExportColumn::make('id')
-                ->label('ID'),
+            ExportColumn::make('id')->label('شماره خیر'),
             ExportColumn::make('type')->label('نوع متعهد (خیر)'),
             ExportColumn::make('national_code')->label('کد ملی ( کد خیر)'),
             ExportColumn::make('full_name')->label('نام و نام خانوادگی خیر'),
@@ -39,7 +38,7 @@ class DonorExporter extends Exporter
             ExportColumn::make('birth_certificate_number')->label('شماره شناسنامه'),
             ExportColumn::make('birth_date')->label('تاریخ تولد'),
             ExportColumn::make('birth_location')->label('محل تولد'),
-            ExportColumn::make('degree_id')->label('مدرک تحصیلی'),
+            ExportColumn::make('degree.name')->label('مدرک تحصیلی'),
             ExportColumn::make('major')->label('رشته تحصیلی'),
             ExportColumn::make('marital_status')->label('وضعیت تاهل'),
             ExportColumn::make('child_count')->label('تعداد فرزند'),
@@ -80,16 +79,6 @@ class DonorExporter extends Exporter
         return $title;
     }
 
-
-    public function getQueuedNotificationTitle(Export $export): string
-    {
-        return "فرایند دانلود آغاز شد";
-    }
-
-    public function fetchFileName()
-    {
-        return "مشخصات-خیرین" . $this->extension;
-    }
 
     public function getFileName(Export $export): string
     {

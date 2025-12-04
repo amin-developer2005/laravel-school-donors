@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Donors\Schemas;
 
 use App\Models\Degree;
+use App\Models\Donor;
 use App\Models\VeteranStatus;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
@@ -19,12 +20,17 @@ class DonorForm
                     'حقیقی' => 'حقیقی',
                     'حقوقی' => 'حقوقی',
                 ])->label('نوع متعهد')->required(),
-                TextInput::make('national_code')->label('کد ملی')->string()->required(),
+                TextInput::make('national_code')->label('کد ملی')
+                    ->string()
+                    ->required()
+                    ->rules(['digits:10'])
+                    ->aboveErrorMessage(['national_code.digits' => "کد ملی نمی تواند بیش از 10 زقم باشد."])
+                ,
                 TextInput::make('full_name')->label('نام و نام خانوادگی')->string()->required(),
 
                 Select::make('life_status')->label('وضعیت حیات')->options([
                     'در قید حیات'   => 'در قید حیات',
-                    'فوت شده'   => 'فوت شده',
+                    'فوت شده'       => 'فوت شده',
                 ])->required(),
 
                 TextInput::make('father_name')->label('نام پدر')->string()->required(),
