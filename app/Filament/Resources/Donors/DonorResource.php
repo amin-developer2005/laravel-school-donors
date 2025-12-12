@@ -50,11 +50,11 @@ class DonorResource extends Resource
 
 
     /**
-     * @return string|null
+     * @return string
      */
     public static function getNavigationLabel(): string
     {
-        return __("donor.panel.navigation_label");
+        return static::$navigationLabel ?? __("donor.panel.navigation_label");
     }
 
     public static function getLabel(): ?string

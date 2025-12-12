@@ -1,10 +1,9 @@
 <?php
 
-namespace App;
+namespace App\View\Components;
 
 use Closure;
 use Illuminate\Contracts\View\View;
-use Illuminate\Routing\Route;
 use Illuminate\View\Component;
 
 class Button extends Component

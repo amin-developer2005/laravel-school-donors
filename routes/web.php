@@ -9,7 +9,7 @@ use Livewire\Volt\Volt;
 Route::permanentRedirect('/', '/home');
 
 Route::get('/home', function () {
-    return view('pages/home');
+    return view('pages/index');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')

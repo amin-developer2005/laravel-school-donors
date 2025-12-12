@@ -13,11 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $this->callOnce([
-            DegreeSeeder::class,
-            VeteranStatusSeeder::class,
+//            DegreeSeeder::class,
+//            VeteranStatusSeeder::class,
+            FundingSourceSeeder::class,
+            ProjectUsageTypeSeeder::class,
+            RegionSeeder::class
         ]);
     }
 }
