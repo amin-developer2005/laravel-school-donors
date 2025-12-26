@@ -19,12 +19,16 @@ class ForgotPasswordRateLimiterService
             return $this->throttleKey;
         }
     }
-
-
     private int $maxAttempts {
         set => $this->maxAttempts = $value;
         get {
             return $this->maxAttempts ?? 3;
+        }
+    }
+    private int $decaySeconds {
+        set => $this->decaySeconds = $value;
+        get {
+            return $this->decaySeconds ?? 90;
         }
     }
 
@@ -37,14 +41,30 @@ class ForgotPasswordRateLimiterService
         $this->rateLimiter = $rateLimiter;
     }
 
-    public function hasExceededAttempts(Request $request): bool
+    public function hasExceededAttempts(string $email): bool
     {
-        return $this->rateLimiter->tooManyAttempts($this->throttleKey($request), $this->maxAttempts);
+        return $this->rateLimiter->tooManyAttempts($this->throttleKey($email), $this->maxAttempts);
     }
 
-    private function throttleKey(Request $request): string
+    public function hit(string $email): int
     {
-        return Str::transliterate($request->ip());
+        return $this->rateLimiter->hit($this->throttleKey($email), $this->decaySeconds);
+    }
+
+    public function clear(string $email): void
+    {
+        $this->rateLimiter->clear($this->throttleKey($email));
+    }
+
+    public function availableIn(string $email): int
+    {
+        return $this->rateLimiter->availableIn($this->throttleKey($email));
+    }
+
+
+    private function throttleKey(string $email): string
+    {
+        return Str::lower(Str::trim($email)) . "|" . request()->ip();
     }
 
 }

@@ -1,7 +1,9 @@
 <?php
 
+use App\Livewire\Auth\Donors\ForgotPassword;
 use App\Livewire\Auth\Donors\Login;
 use App\Livewire\Auth\Donors\Register;
+use App\Livewire\Auth\Donors\ResetPassword;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -17,8 +19,16 @@ Route::view('dashboard', 'dashboard')
     ->name('dashboard');
 
 Route::middleware('guest')->prefix('donors')->group(function () {
-    Volt::route('login', Login::class)->name('donors.login');
+    Volt::route('login', Login::class)
+        ->name('donors.login')
+        ->middleware(['throttle:2']);
     Volt::route('register', Register::class)->name('donors.register');
+
+    Volt::route('forgot-password', ForgotPassword::class)
+        ->name('donors.forgottenPassword')
+        ;
+    Volt::route('reset-password', ResetPassword::class)
+        ->name('donors.resetPassword');
 });
 
 Route::middleware(['auth'])->group(function () {

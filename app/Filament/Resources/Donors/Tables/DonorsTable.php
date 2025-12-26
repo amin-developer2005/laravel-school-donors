@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Donors\Tables;
 
 
 use App\Filament\Exports\SchoolDonorExporter;
+use App\Models\Degree;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
@@ -11,6 +13,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ExportAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Database\Query\Builder;
 
@@ -39,29 +42,23 @@ class DonorsTable
                 TextColumn::make("address")->label('آدرس'),
             ])
             ->filters([
-
-                Filter::make('type')->query(
-                    fn (Builder $query) => $query->where('type', "حقیقی")->latest()->get(),
-                )->label("نوع متعد: حقیقی"),
-
-                Filter::make('life_status')->query(
-                    fn (Builder $query) => $query->where('life_status', 'فوت شده')->latest()->get())
-                    ->label('وضعیت حیات')
-                ,
-                Filter::make('address')->query(
-                    fn(Builder $query) => $query->whereNotNull('address')->latest()->get()
-                )->label('آدرس'),
-
-                Filter::make()->query(
-                    fn(Builder $query) => $query->where('type', 'حقوقی')->latest()->get(),
-                )->label("نوع متعد: حقوقی"),
-
-                Filter::make('marital_status')->query(
-                    fn(Builder $query) => $query->where('marital_status',"متاهل")->latest()->get(),
-                )->label("وضعیت تاهل: متاهل"),
-
+                SelectFilter::make('type')->label('نوع متعهد')->options([
+                    'حقیقی' => 'حقیقی',
+                    'حقوقی' => 'حقوقی',
+                ]),
+                SelectFilter::make('marital_status')->label('وضعیت تاهل')->options([
+                    'مجرد' => 'مجرد',
+                    'متاهل' => 'متاهل',
+                ]),
+                SelectFilter::make('life_status')->label('وضعیت حیات')->options([
+                    'در قید حیات'   => 'در قید حیات',
+                    'فوت شده'       => 'فوت شده',
+                ]),
+                SelectFilter::make('degree_id')->label('مدرک تحصیلی')->options(
+                    fn() => Degree::query()->pluck('name', 'id')->all()
+                ),
             ])
-            ->searchable(['full_name', 'type'])
+            ->searchable(['full_name', 'type', 'marital_status', 'life_status'])
             ->recordActions([
                 EditAction::make(),
                 DeleteAction::make()
@@ -70,11 +67,40 @@ class DonorsTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
+                BulkAction::make('delete')
+                    ->action(
+                        fn(object $records) => $records->each->delete()
+                    )
             ])
             ->headerActions([
                 ExportAction::make()
                     ->exporter(SchoolDonorExporter::class)->label("خروجی اکسل")
             ])
             ;
+    }
+
+    private function filters(Table $table): Table
+    {
+        return $table->filters([
+            Filter::make('type')->query(
+                fn (Builder $query) => $query->where('type', "حقیقی")->latest()->get(),
+            )->label("نوع متعد: حقیقی"),
+
+            Filter::make('life_status')->query(
+                fn (Builder $query) => $query->where('life_status', 'فوت شده')->latest()->get())
+                ->label('وضعیت حیات')
+            ,
+            Filter::make('address')->query(
+                fn(Builder $query) => $query->whereNotNull('address')->latest()->get()
+            )->label('آدرس'),
+
+            Filter::make()->query(
+                fn(Builder $query) => $query->where('type', 'حقوقی')->latest()->get(),
+            )->label("نوع متعد: حقوقی"),
+
+            Filter::make('marital_status')->query(
+                fn(Builder $query) => $query->where('marital_status',"متاهل")->latest()->get(),
+            )->label("وضعیت تاهل: متاهل"),
+        ]);
     }
 }

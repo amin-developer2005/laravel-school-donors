@@ -23,7 +23,7 @@ class DonorForm
                 TextInput::make('national_code')->label('کد ملی')
                     ->string()
                     ->required()
-                    ->rules(['digits:10'])
+                    ->maxLength(10)
                     ->aboveErrorMessage(['national_code.digits' => "کد ملی نمی تواند بیش از 10 زقم باشد."])
                 ,
                 TextInput::make('full_name')->label('نام و نام خانوادگی')->string()->required(),

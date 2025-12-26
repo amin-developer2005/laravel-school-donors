@@ -57,7 +57,7 @@
             تا امروز <span class="font-bold text-yellow-400">۱,۸۴۷</span> کلاس درس با کمک <span class="font-bold text-yellow-400">۲۸,۹۳۴</span> خیر عزیز ساخته شده
         </p>
         <div class="space-x-reverse space-x-6">
-            <a href="#" class="bg-green-500 text-white px-10 py-5 rounded-full text-xl font-bold hover:bg-green-600 transition inline-block">شروع کمک مالی</a>
+            <a href="{{ route('donors.login') }}" class="bg-green-500 text-white px-10 py-5 rounded-full text-xl font-bold hover:bg-green-600 transition inline-block">شروع کمک مالی</a>
             <a href="#" class="border-2 border-white text-white px-10 py-5 rounded-full text-xl font-bold hover:bg-white hover:text-gray-800 transition inline-block">مشاهده پروژه‌ها</a>
         </div>
     </div>
@@ -187,8 +187,8 @@
         </div>
         <div>
             <h4 class="font-bold text-xl mb-6">تماس با ما</h4>
-            <p>تلفن: ۰۲۱-۸۸۷۷۶۶۵۵</p>
-            <p>واتساپ: ۰۹۰۳۱۲۳۴۵۶۷</p>
+            <p>تلفن: </p>
+            <p>واتساپ: </p>
         </div>
         <div>
             <h4 class="font-bold text-xl mb-6">نمادهای اعتماد</h4>

@@ -51,4 +51,20 @@ class ProjectResource extends Resource
         ];
     }
 
+
+    public static function getLabel():string
+    {
+        return __("project.panel.label");
+    }
+
+    public static function getNavigationLabel():string
+    {
+        return __("project.panel.navigation_label");
+    }
+
+    public static function getPluralLabel():string
+    {
+        return __("project.panel.plural_label");
+    }
+
 }

@@ -10,5 +10,5 @@ return [
         'create_label'  => 'ایجاد خیر',
         'edit_label'  => 'ویرایش خیر',
         'delete_label'  => 'حذف خیر'
-    ]
+    ],
 ];

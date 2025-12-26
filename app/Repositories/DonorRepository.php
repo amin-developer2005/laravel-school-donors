@@ -17,9 +17,18 @@ class DonorRepository
 
     public static function pluckDonors(?string $column = null, ?string $key = null) : array
     {
-        $column ??= "name";
+        $column ??= "full_name";
         $key ??= 'id';
 
         return Donor::query()->pluck($column, $key)->all();
+    }
+
+    public static function searchDonors(string $search, ?string $field = null) : array
+    {
+        $query = Donor::query()
+            ->where('full_name', 'like', "%{$search}%")
+            ->pluck('full_name', 'id');
+
+        return $field ? $query->get($field) : $query->all();
     }
 }

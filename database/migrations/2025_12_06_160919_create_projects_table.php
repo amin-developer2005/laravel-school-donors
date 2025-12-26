@@ -19,14 +19,14 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->enum('status', ['در دست اجرا', 'کامل شده', 'کنسل شده']);
-            $table->smallInteger('space_code');
+            $table->unsignedBigInteger('space_code');
             $table->enum('urban_rural', ['شهر', 'روستا']);
             $table->string('city')->nullable();
             $table->string('village')->nullable();
             $table->foreignIdFor(Region::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignIdFor(ProjectUsageType::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
-            $table->year('start_year');
-            $table->year('end_year');
+            $table->smallInteger('start_year')->unsigned();
+            $table->smallInteger('end_year')->unsigned();
             $table->foreignIdFor(FundingSource::class)->constrained()->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreignId('builder_donor_id')->constrained('donors')
                 ->cascadeOnDelete()

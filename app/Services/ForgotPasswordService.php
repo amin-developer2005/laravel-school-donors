@@ -22,10 +22,10 @@ class ForgotPasswordService
     }
 
 
-    public function sendResetLink(User $user)
+    public function sendResetLink(string $email): string
     {
         $status = $this->passwordBroker->sendResetLink([
-            'email'  => $user->email,
+            'email'  => $email,
         ]);
 
         return $status;
