@@ -216,8 +216,8 @@ class ProjectForm
                 TextInput::make('cost')
                     ->required()
                     ->integer()
-                    ->visible(fn($get) => $get("status") == "کامل شده")
-                    ->rules([fn($get) => $get('status') == 'کامل شده' ? 'required|integer|min:0' : 'nullable|integer|min:0'])
+                    ->visible(fn($get) => $get('status') == 'کامل شده')
+                    ->rules(fn($get) => $get('status') == 'کامل شده' ? ['required', 'integer'] : ['nullable', 'integer'])
                     ->validationAttribute('هزینه')
                     ->validationAttribute('هزینه پروژه')
                     ->validationMessages([

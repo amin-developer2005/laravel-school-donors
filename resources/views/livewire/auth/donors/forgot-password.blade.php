@@ -24,6 +24,6 @@
 
     <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-400">
         <span>{{ __('یا, بر گرد به') }}</span>
-        <flux:link :href="route('login')" wire:navigate>{{ __('لاگین') }}</flux:link>
+        <flux:link :href="route('donors.login')" wire:navigate>{{ __('لاگین') }}</flux:link>
     </div>
 </div>

@@ -4,7 +4,9 @@ namespace App\Livewire\Auth\Donors;
 
 use App\Actions\Fortify\PasswordValidationRules;
 use App\Models\User;
+use App\Services\LoginRateLimiterService;
 use Illuminate\Auth\Events\Failed;
+use Illuminate\Auth\Events\Lockout;
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Session;
@@ -46,10 +48,19 @@ class Login extends Component
     }
 
 
+    protected LoginRateLimiterService $rateLimiterService {
+        set => $this->rateLimiterService = $value;
+        get {
+            return $this->rateLimiterService ?? app(LoginRateLimiterService::class);
+        }
+    }
 
-    public function mount(StatefulGuard $guard): void
+
+
+    public function mount(StatefulGuard $guard, LoginRateLimiterService $rateLimiterService): void
     {
         $this->guard = $guard;
+        $this->rateLimiterService = $rateLimiterService;
     }
 
 
@@ -58,6 +69,7 @@ class Login extends Component
      */
     public function store(): void
     {
+        $this->ensureThisIsNotThrottled();
         $this->validate();
 
         if (! $this->guard->attempt([
@@ -69,18 +81,25 @@ class Login extends Component
             $this->throwFailedAuthenticationException();
         }
 
+        $this->rateLimiterService->clear($this->email);
         Session::regenerate();
 
         $this->redirectRoute('filament.admin.pages.dashboard', navigate: true);
     }
 
 
+    /**
+     * @throws ValidationException
+     */
     private function throwFailedAuthenticationException()
     {
+        $this->rateLimiterService->hit($this->email);
+
         throw ValidationException::withMessages([
             'email'   => [trans('auth.failed')],
         ])->errorBag('login');
     }
+
 
     private function fireFailedEvent(): void
     {
@@ -90,6 +109,36 @@ class Login extends Component
             'email' => $this->email,
             'password' => $this->password,
         ]));
+    }
+
+
+    /**
+     * @throws ValidationException
+     */
+    private function ensureThisIsNotThrottled(): void
+    {
+        if (! $this->rateLimiterService->hasExceededAttempts($this->email)) {
+            return;
+        }
+
+        event(new Lockout(request()));
+
+        $this->throwThrottledException();
+    }
+
+    /**
+     * @throws ValidationException
+     */
+    protected function throwThrottledException(): void
+    {
+        $seconds = $this->rateLimiterService->availableIn($this->email);
+
+        throw ValidationException::withMessages([
+            'email' => [trans('auth.throttle', [
+                'seconds' => $seconds,
+                'minutes' => ceil($seconds / 60)
+            ])]
+        ]);
     }
 
     public function render()

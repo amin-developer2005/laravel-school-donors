@@ -20,13 +20,11 @@ Route::view('dashboard', 'dashboard')
 
 Route::middleware('guest')->prefix('donors')->group(function () {
     Volt::route('login', Login::class)
-        ->name('donors.login')
-        ->middleware(['throttle:2']);
+        ->name('donors.login');
     Volt::route('register', Register::class)->name('donors.register');
 
     Volt::route('forgot-password', ForgotPassword::class)
-        ->name('donors.forgottenPassword')
-        ;
+        ->name('donors.forgottenPassword');
     Volt::route('reset-password', ResetPassword::class)
         ->name('donors.resetPassword');
 });

@@ -6,6 +6,7 @@ use App\Services\ForgotPasswordRateLimiterService;
 use App\Services\ForgotPasswordService;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\ValidationException;
 use Livewire\Component;
 
 
@@ -48,7 +49,7 @@ class ForgotPassword extends Component
 
 
     /**
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     public function sendPasswordResetLink(): void
     {
@@ -68,12 +69,12 @@ class ForgotPassword extends Component
         $this->reset('email');
         $this->rateLimiterService->clear($this->email);
 
-        session()->flash('status', __("forgot_password.reset-link-sent"));
+        session()->flash('status', __(" passwords.reset"));
     }
 
 
     /**
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function ensureIsNotThrottled(): void
     {
@@ -88,14 +89,14 @@ class ForgotPassword extends Component
 
 
     /**
-     * @throws \Illuminate\Validation\ValidationException
+     * @throws ValidationException
      */
     protected function throwThrottledException(): void
     {
         $seconds = $this->rateLimiterService->availableIn($this->email);
 
-        throw \Illuminate\Validation\ValidationException::withMessages([
-            'email' => __('auth.forgot_password.throttle', [
+        throw ValidationException::withMessages([
+            'email' => __('passwords.throttled', [
                 'seconds' => $seconds,
                 'minutes' => ceil($seconds / 60),
             ])

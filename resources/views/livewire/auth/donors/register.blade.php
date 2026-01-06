@@ -65,6 +65,6 @@
 
         <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
             <span>{{ __('آیا قبلا حساب خود را ایجاد کرده اید?') }}</span>
-            <flux:link :href="route('login')" wire:navigate>{{ __('وارد شوید') }}</flux:link>
+            <flux:link :href="route('donors.login')" wire:navigate>{{ __('وارد شوید') }}</flux:link>
         </div>
     </div>
