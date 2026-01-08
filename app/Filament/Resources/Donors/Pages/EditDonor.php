@@ -6,6 +6,8 @@ use App\Filament\Resources\Donors\DonorResource;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class EditDonor extends EditRecord
 {
@@ -17,6 +19,20 @@ class EditDonor extends EditRecord
             DeleteAction::make()->label(__("donor.panel.delete_label")),
         ];
     }
+
+    /**
+     * @throws ValidationException
+     */
+    public function validate($rules = null, $messages = [], $attributes = []): array
+    {
+        $rules['data.national_code'][6] = Rule::unique('donors', 'national_code')
+                ->ignore($this->record);
+        $rules['data.birth_certificate_number'][6] = Rule::unique('donors', 'birth_certificate_number')
+                ->ignore($this->record);
+
+        return parent::validate($rules, $messages, $attributes);
+    }
+
 
     public function getTitle(): string|Htmlable
     {

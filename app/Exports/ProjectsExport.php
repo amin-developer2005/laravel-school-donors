@@ -23,7 +23,7 @@ class ProjectsExport implements FromCollection, WithHeadings
 
     public static function filename(): string
     {
-        return 'projects.' . self::FORMAT;
+        return 'پروژه های مدرسه سازی .' . self::FORMAT;
     }
 
     public function headings(): array
