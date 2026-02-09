@@ -12,7 +12,7 @@ FROM node:20-alpine AS node
 WORKDIR /app
 COPY package*.json vite.config.js ./
 COPY resources ./resources
-RUN npm ci && npm run build
+RUN npm run build
 
 # مرحله نهایی (PHP ساده با artisan serve – برای شروع عالیه)
 FROM php:8.3-cli-alpine
