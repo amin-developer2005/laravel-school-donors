@@ -1,46 +1,43 @@
-FROM ubuntu:latest
-LABEL authors="Administrator"
-
-# مرحله Composer
+# مرحله Composer (همون قبلی)
 FROM composer:latest AS composer
 WORKDIR /app
 COPY composer.json composer.lock ./
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-# مرحله Node/Vite برای build assets (Filament)
-FROM node:20-alpine AS node
+# مرحله Node/Vite – اینجا تغییر اصلی: node:20 به جای alpine
+FROM node:20 AS node
 WORKDIR /app
-COPY package*.json vite.config.js ./
-COPY resources ./resources
+
+# اول packageها برای caching
+COPY package*.json ./
+RUN npm ci
+
+# بعد همه کد
+COPY . .
+
+# حالا build – vite درست پیدا می‌شه
 RUN npm run build
 
-# مرحله نهایی (PHP ساده با artisan serve – برای شروع عالیه)
+# مرحله نهایی (PHP)
 FROM php:8.3-cli-alpine
 
-# نصب اکستنشن‌های لازم
 RUN apk add --no-cache \
     php-pgsql php-bcmath php-ctype php-fileinfo php-mbstring php-openssl php-pdo php-tokenizer php-xml php-curl php-zip \
-    && docker-php-ext-install pdo_pgsql  # اگه MySQL داری، pdo_mysql بگذار
+    && docker-php-ext-install pdo_pgsql  # اگه MySQL، pdo_mysql
 
 WORKDIR /var/www/html
 
-# کپی vendor و assets build شده
 COPY --from=composer /app/vendor ./vendor
 COPY --from=node /app/public/build ./public/build
-
-# کپی بقیه کد پروژه
 COPY . .
 
-# لینک storage، کش‌ها و Filament assets
 RUN php artisan storage:link \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache \
     && php artisan filament:assets
 
-# پورت Render (متغیر محیطی PORT که Render خودش می‌ده)
 ENV PORT=10000
 EXPOSE $PORT
 
-# شروع اپ با artisan serve (ساده و سریع برای پروداکشن کوچک)
 CMD php artisan serve --host=0.0.0.0 --port=$PORT
