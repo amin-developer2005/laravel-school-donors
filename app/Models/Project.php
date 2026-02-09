@@ -14,7 +14,7 @@ class Project extends Model
         'start_year', 'end_year', 'funding_source_id', 'builder_donor_id', 'land_donor_id', 'cost',
         'main_building_area', 'bathroom_area', 'janitor_area', 'guard_area', 'wall_area',
         'land_spacing_area', 'gym_area', 'prayer_room_area', 'total_under_constructions',
-        'classrooms_count', 'contractor', 'supervisor', 'address', 'agreement_file'
+        'classrooms_count', 'contractor', 'supervisor', 'address', 'latitude', 'longitude', 'agreement_file',
     ];
 
     public function region(): BelongsTo
@@ -79,7 +79,8 @@ class Project extends Model
     protected function casts(): array
     {
         return [
-
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 }

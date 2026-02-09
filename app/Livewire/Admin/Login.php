@@ -1,19 +1,15 @@
 <?php
 
-namespace App\Livewire\Auth\Donors;
+namespace App\Livewire\Admin;
 
 use App\Actions\Fortify\PasswordValidationRules;
-use App\Models\User;
 use App\Services\LoginRateLimiterService;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Lockout;
-use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use Livewire\Component;
-use Spatie\Permission\Models\Role;
 
 class Login extends Component
 {
@@ -28,8 +24,8 @@ class Login extends Component
         get => $this->password;
     }
     public bool $rememberMe {
-            set => $this->rememberMe = $value;
-            get => $this->rememberMe ?? false;
+        set => $this->rememberMe = $value;
+        get => $this->rememberMe ?? false;
     }
 
     protected array $rules {
@@ -44,7 +40,7 @@ class Login extends Component
     protected StatefulGuard $guard {
         set => $this->guard = $value;
         get {
-            return $this->guard ?? app(StatefulGuard::class);
+            return $this->guard;
         }
     }
 
@@ -52,7 +48,7 @@ class Login extends Component
     protected LoginRateLimiterService $rateLimiterService {
         set => $this->rateLimiterService = $value;
         get {
-            return $this->rateLimiterService ?? app(LoginRateLimiterService::class);
+            return $this->rateLimiterService;
         }
     }
 
@@ -85,7 +81,7 @@ class Login extends Component
         $this->rateLimiterService->clear($this->email);
         Session::regenerate();
 
-        $this->redirectRoute('filament.schoolDonors.pages.dashboard', navigate: true);
+        $this->redirectRoute('filament.admin.pages.dashboard', navigate: true);
     }
 
 
@@ -142,8 +138,9 @@ class Login extends Component
         ]);
     }
 
+
     public function render()
     {
-        return view('livewire.auth.donors.login')->layout('components.layouts.auth');
+        return view('livewire.admin.login')->layout('components.layouts.auth');
     }
 }

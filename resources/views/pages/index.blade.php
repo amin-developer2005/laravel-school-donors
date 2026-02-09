@@ -1,5 +1,4 @@
-{{-- resources/views/home.blade.php --}}
-    <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fa" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -28,7 +27,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center h-20">
             <div class="flex items-center">
-                <img src="https://via.placeholder.com/180x60/0D99FF/ffffff?text=خیرین+مدرسه‌ساز" alt="لوگو" class="h-12">
+                <x-app-logo />
             </div>
             <div class="hidden md:flex items-center space-x-reverse space-x-8 text-lg font-medium">
                 <a href="#" class="text-gray-700 hover:text-blue-600 transition">خانه</a>
@@ -37,7 +36,16 @@
                 <a href="#" class="text-gray-700 hover:text-blue-600 transition">مدارس</a>
                 <a href="#" class="text-gray-700 hover:text-blue-600 transition">بلاگ</a>
                 <a href="#" class="text-gray-700 hover:text-blue-600 transition">تماس با ما</a>
-                <a href="#" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition font-bold">همین حالا کمک کنید</a>
+                @auth
+                    <a href="{{ route('filament.admin.pages.dashboard') }}" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition font-bold">
+                         پنل ادمین
+                    </a>
+                @endauth
+                @guest
+                    <a href="{{ route('panel.admin.login') }}" class="bg-blue-600 text-white px-6 py-3 rounded-full hover:bg-blue-700 transition font-bold">
+                        ورود به پنل ادمین
+                    </a>
+                @endguest
             </div>
             <div class="md:hidden">
                 <button class="text-gray-700">☰</button>

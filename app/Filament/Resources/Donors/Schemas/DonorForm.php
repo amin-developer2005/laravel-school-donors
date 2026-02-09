@@ -5,10 +5,15 @@ namespace App\Filament\Resources\Donors\Schemas;
 use App\Models\Degree;
 use App\Models\Donor;
 use App\Models\VeteranStatus;
+use Dotswan\MapPicker\Fields\Map;
+use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
 
@@ -188,9 +193,10 @@ class DonorForm
                         'unique'   => 'این شماره شناسنامه قبلاً در سیستم ثبت شده است.',
                     ]),
 
-                DateTimePicker::make('birth_date')
+                DatePicker::make('birth_date')
                     ->label('تاریخ تولد')
                     ->required()
+                    ->jalali()
                     ->rules(['required', 'date'])
                     ->validationMessages([
                         'required'    => 'لطفاً تاریخ تولد را وارد کنید.',
@@ -287,7 +293,6 @@ class DonorForm
                     ->label('تلفن ثابت')
                     ->numeric()
                     ->required()
-                    // اجازه می‌دهیم بین 7 تا 15 رقم (با پیش‌شماره‌ها) وارد شود
                     ->rules(['required', 'digits_between:7,15', 'numeric'])
                     ->validationMessages([
                         'required'       => 'تلفن ثابت را وارد کنید.',
@@ -299,7 +304,6 @@ class DonorForm
                     ->label('تلفن همراه')
                     ->numeric()
                     ->required()
-                    // فرمت موبایل ایران: 09XXXXXXXXX (11 رقم) — regex چک می‌کند
                     ->rules(['required', 'regex:/^09\d{9}$/', 'digits:11'])
                     ->validationMessages([
                         'required' => 'شماره تلفن همراه را وارد کنید.',

@@ -5,6 +5,8 @@ namespace App\Filament\Resources\Donors\Tables;
 
 use App\Exports\SchoolDonorsExport;
 use App\Models\Degree;
+use App\Models\Donor;
+use App\Models\Project;
 use App\Models\VeteranStatus;
 use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
@@ -40,8 +42,7 @@ class DonorsTable
                 TextColumn::make("full_name")
                     ->label('نام و نام خانوادگی خیر')
                     ->toggleable()
-                    ->searchable()
-                ,
+                    ->searchable(),
                 TextColumn::make("life_status")
                     ->label('وضعیت حیات')
                     ->toggleable()
@@ -54,10 +55,11 @@ class DonorsTable
                     ->label('شماره شناسنامه')
                     ->toggleable()
                     ->searchable(),
-                TextColumn::make("birth_date")
+                TextColumn::make('birth_date')
                     ->label('تاریخ تولد')
-                    ->toggleable()
-                    ->searchable(),
+                    ->jalaliDate()
+                    ->searchable()
+                    ->toggleable(),
                 TextColumn::make("birth_location")
                     ->label('محل تولد')
                     ->toggleable()
@@ -88,6 +90,7 @@ class DonorsTable
                     ->searchable(),
                 TextColumn::make("mobile")
                     ->label('تلفن همراه')
+                    ->getStateUsing(fn(Donor $donor) => 0 . $donor->mobile)
                     ->toggleable()
                     ->searchable(),
                 TextColumn::make("address")
@@ -117,6 +120,16 @@ class DonorsTable
                     ->schema([ TextInput::make('birth_certificate_number')->label('شماره شناسنامه') ])
                     ->query(fn (Builder $query, array $data) => $query->when($data['birth_certificate_number'] ?? null, fn($q,$v) => $q->where('birth_certificate_number', 'like', "%{$v}%"))),
 
+                Filter::make('birth_date')
+                    ->schema([
+                        DatePicker::make('birth_date_from')->label('تاریخ تولد از')->jalali(),
+                        DatePicker::make('birth_date_to')->label('تاریخ تولد تا')->jalali()
+                    ])
+                    ->query(function (Builder $query, array $data) {
+                        $query->when($data['birth_date_from'] ?? null, fn($q, $val) => $q->whereDate('birth_date', '>=', $val));
+                        $query->when($data['birth_date_to'] ?? null, fn($q, $val) => $q->whereDate('birth_date', '<=', $val));
+                    }),
+
                 Filter::make('father_name')
                     ->schema([ TextInput::make('father_name')->label('نام پدر') ])
                     ->query(fn (Builder $query, array $data) => $query->when($data['father_name'] ?? null, fn($q,$v) => $q->where('father_name', 'like', "%{$v}%"))),
@@ -145,17 +158,6 @@ class DonorsTable
                     ->query(function (Builder $query, array $data) {
                         $query = $query->when(isset($data['child_count_min']) && $data['child_count_min'] !== null, fn($q,$v) => $q->where('child_count', '>=', $v));
                         return $query->when(isset($data['child_count_max']) && $data['child_count_max'] !== null, fn($q,$v) => $q->where('child_count', '<=', $v));
-                    }),
-
-                Filter::make('birth_date')
-                    ->schema([
-                        DatePicker::make('birth_date_from')->label('تاریخ تولد از'),
-                        DatePicker::make('birth_date_to')->label('تاریخ تولد تا'),
-                    ])
-                    ->query(function (Builder $query, array $data) {
-                        return $query
-                            ->when($data['birth_date_from'] ?? null, fn($q,$v) => $q->whereDate('birth_date', '>=', $v))
-                            ->when($data['birth_date_to'] ?? null, fn($q,$v) => $q->whereDate('birth_date', '<=', $v));
                     }),
 
                 SelectFilter::make('veteran_status_id')->label('وضعیت ایثارگری')->options(

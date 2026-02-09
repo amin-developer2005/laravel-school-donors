@@ -8,10 +8,14 @@ use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
-Route::permanentRedirect('/', '/home');
+Route::get('/', function () {
+    return redirect()->route('filament.admin.auth.login');
+});
+
+Route::permanentRedirect('/home', '/admin/login');
 
 Route::get('/home', function () {
-    return view('pages/index');
+    return redirect('/admin');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
@@ -47,3 +51,6 @@ Route::middleware(['auth'])->group(function () {
         )
         ->name('two-factor.show');
 });
+
+
+require __DIR__.'/admin.php';

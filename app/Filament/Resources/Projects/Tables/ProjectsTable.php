@@ -225,6 +225,18 @@ class ProjectsTable
                     ->dateTime('Y-m-d H:i')
                     ->sortable()
                     ->toggleable(),
+
+                TextColumn::make('latitude')
+                    ->label('عرض جغرافیایی')
+                    ->getStateUsing(fn(Project $project) => $project->latitude !== null ? number_format($project->latitude) : '-')
+                    ->sortable()
+                    ->toggleable(),
+
+                TextColumn::make('longitude')
+                    ->label('عرض جغرافیایی')
+                    ->getStateUsing(fn(Project $project) => $project->longitude !== null ? number_format($project->longitude) : '-')
+                    ->sortable()
+                    ->toggleable(),
             ])
             ->searchable()
             ->filters(
@@ -261,7 +273,7 @@ class ProjectsTable
                         ->options(
                             fn(): array => ProjectUsageType::query()->pluck('name', 'id')->all()
                         ),
-                    SelectFilter::make('region')
+                    SelectFilter::make('region_id')
                         ->label('ناحیه / منطقه')
                         ->options(
                             fn() => Region::query()->pluck('name', 'id')->all()

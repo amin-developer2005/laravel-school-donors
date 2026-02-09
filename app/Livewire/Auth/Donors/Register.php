@@ -10,6 +10,7 @@ use Illuminate\Contracts\Auth\StatefulGuard;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 use Livewire\Component;
+use Spatie\Permission\Models\Role;
 
 class Register extends Component
 {
@@ -57,11 +58,13 @@ class Register extends Component
     {
         $this->guard = app(StatefulGuard::class);
         $this->validate();
-        $this->password = Hash::make($this->password);
 
-        $user = $creator->create(['email' => $this->email, 'password' => $this->password, 'name' => $this->username]);
+        $password = Hash::make($this->password);
 
-        //$user->donor()->create();
+        $user = $creator->create([
+            'email' => $this->email, 'password' => $password, 'name' => $this->username
+        ]);
+
         $this->guard->login($user);
 
         $this->redirectRoute('filament.schoolDonors.pages.dashboard', navigate: true);

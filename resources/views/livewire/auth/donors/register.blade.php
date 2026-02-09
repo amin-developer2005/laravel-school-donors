@@ -36,7 +36,7 @@
             <flux:input
                 name="password"
                 wire:model="password"
-                :label="__('Password')"
+                :label="__('پسوورد')"
                 type="password"
                 required
                 autocomplete="new-password"

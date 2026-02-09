@@ -2,7 +2,11 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Admin\Auth\Login;
 use App\Filament\Resources\Donors\DonorResource;
+use App\Http\Middleware\AdminPanelMiddleware;
+use App\Http\Responses\LogoutResponse;
+use Filament\Auth\Http\Responses\Contracts\LogoutResponse as FilamentLogoutResponse;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -56,6 +60,12 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                AdminPanelMiddleware::class,
             ]);
+    }
+
+    public function boot() : void
+    {
+        $this->app->bind(FilamentLogoutResponse::class, LogoutResponse::class);
     }
 }

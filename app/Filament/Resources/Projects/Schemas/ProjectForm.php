@@ -7,14 +7,21 @@ use App\Models\FundingSource;
 use App\Models\ProjectUsageType;
 use App\Models\Region;
 use App\Repositories\DonorRepository;
+use Dotswan\MapPicker\Facades\MapPicker;
+use Dotswan\MapPicker\Fields\Map;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
+use Filament\Support\View\Components\ModalComponent;
 use Illuminate\Validation\Rule;
 
 class ProjectForm
@@ -31,7 +38,6 @@ class ProjectForm
                     ->label('عنوان پروژه')
                     ->string()
                     ->validationAttribute('عنوان پروژه')
-
                     ->validationAttribute('عنوان پروژه')
                     ->validationMessages([
                         'required' => 'وارد کردن عنوان پروژه الزامی است.',
@@ -397,6 +403,53 @@ class ProjectForm
                         'mimes' => 'فایل تفاهم‌نامه باید از نوع PDF، DOC، DOCX، XLSX یا ZIP باشد.',
                         'max'   => 'حجم فایل تفاهم‌نامه نباید بیش از :max کیلوبایت باشد.',
                     ]),
+
+                TextInput::make('latitude')
+                    ->label('عرض جغرافیایی ')
+                    ->numeric()
+                    ->nullable()
+                    ->reactive()
+                    ->extraAttributes(['id' => 'latitude']),
+                TextInput::make('longitude')
+                    ->label('طول جغرافیایی')
+                    ->numeric()
+                    ->nullable()
+                    ->reactive()
+                    ->extraAttributes(['id' => 'longitude']),
+
+
+                Actions::make([
+                    Action::make('mapPicker')
+                        ->label('انتخاب از نقشه')
+                        ->modalHeading('انتخاب مکان پروژه روی نقشه')
+                        ->modalCloseButton()
+                        ->icon('heroicon-o-map-pin')
+                        ->schema([
+                            Map::make('location')
+                                ->label('نقطه پروژه را انتخاب کنید')
+                                ->defaultLocation(34.6416, 50.8746)
+                                ->zoom(12)
+                                ->draggable()
+                                ->clickable(true)
+                                ->reactive()
+                                ->afterStateUpdated(function ($state, Set $set) {
+                                    $markers = $state ?? [];
+
+                                    if ($markers) {
+                                        $set('latitude', $markers['lat'] ?? null);
+                                        $set('longitude', $markers['lng'] ?? null);
+                                    }
+                                })
+                        ])
+                        ->action(function (array $data, Set $set) {
+                            $markers = $data['location'] ?? [];
+
+                            if ($markers) {
+                                $set('latitude', $markers['lat'] ?? null);
+                                $set('longitude', $markers['lng'] ?? null);
+                            }
+                        }),
+                ]),
             ]);
     }
 }
