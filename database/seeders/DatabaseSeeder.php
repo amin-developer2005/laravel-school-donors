@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         $this->callOnce([
-//            DegreeSeeder::class,
-//            VeteranStatusSeeder::class,
+            DegreeSeeder::class,
+            VeteranStatusSeeder::class,
             FundingSourceSeeder::class,
             ProjectUsageTypeSeeder::class,
             RegionSeeder::class
