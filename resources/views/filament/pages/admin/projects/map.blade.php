@@ -23,7 +23,20 @@
                 const lng = parseFloat(p.longitude);
                 if (!isNaN(lat) && !isNaN(lng)) {
                     const marker = L.marker([lat, lng]).addTo(map);
-                    marker.bindPopup(`<strong>${escapeHtml(p.title)}</strong><br>${escapeHtml(p.address ?? '')}`);
+
+                    const title = p.title ?? '';
+                    const address = p.address ?? '';
+                    const year = p.start_year ?? ''; // اگر column نامش فرق داره همین خط را اصلاح کن
+
+                    const popupContent = `
+                <div style="direction: rtl; text-align: right; min-width:200px;">
+                    <strong style="display:block; margin-bottom:4px;">${escapeHtml(title)}</strong>
+                    <div style="font-size:0.9rem; margin-bottom:4px;"><strong>آدرس:</strong> ${escapeHtml(address)}</div>
+                    <div style="font-size:0.9rem;"><strong>سال ساخت:</strong> ${escapeHtml(year.toString())}</div>
+                </div>
+            `;
+
+                    marker.bindPopup(popupContent);
                     markers.push(marker);
                 }
             });
