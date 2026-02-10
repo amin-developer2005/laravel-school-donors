@@ -2,60 +2,46 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <div id="map" style="height: 75vh; border-radius: 8px; margin-top: 1rem;"></div>
+    <div id="projects-map" style="height: 640px; border:1px solid #e5e7eb; border-radius:6px;"></div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const projects = @json($projects);
+            const center = [34.6399, 50.8759];
+            const map = L.map('projects-map').setView(center, 9);
 
-            // مرکز تقریبی شهر قم (می‌تونی تغییرش بدی)
-            const qomCenter = [34.6399, 50.8759];
-
-            const map = L.map('map').setView(qomCenter, 12);
-
-            // لایه‌ی OpenStreetMap
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: 'Leaflet | © OpenStreetMap contributors'
+                maxZoom: 18,
+                attribution: '&copy; OpenStreetMap contributors'
             }).addTo(map);
 
-            // اضافه کردن مارکرها
-            projects.forEach(project => {
-                // بررسی مختصات معتبر
-                if (!project.latitude || !project.longitude) return;
+            const projects = @json($this->projects);
 
-                // تبدیل رشته به عدد (در صورت نیاز)
-                const lat = parseFloat(project.latitude);
-                const lng = parseFloat(project.longitude);
+            const markers = [];
 
-                if (Number.isNaN(lat) || Number.isNaN(lng)) return;
-
-                const marker = L.marker([lat, lng]).addTo(map);
-
-                // محتوای popup — از مقادیر امن‌شده استفاده کن
-                const title = project.title ?? 'بدون عنوان';
-                const address = project.address ?? 'آدرس نامشخص';
-                const year = project.start_year ?? 'نامشخص'; // اگر column نامش فرق داره همین خط را اصلاح کن
-
-                const popupContent = `
-                <div style="direction: rtl; text-align: right; min-width:200px;">
-                    <strong style="display:block; margin-bottom:4px;">${escapeHtml(title)}</strong>
-                    <div style="font-size:0.9rem; margin-bottom:4px;"><strong>آدرس:</strong> ${escapeHtml(address)}</div>
-                    <div style="font-size:0.9rem;"><strong>سال ساخت:</strong> ${escapeHtml(year.toString())}</div>
-                </div>
-            `;
-
-                marker.bindPopup(popupContent);
+            projects.forEach(function(p) {
+                const lat = parseFloat(p.latitude);
+                const lng = parseFloat(p.longitude);
+                if (!isNaN(lat) && !isNaN(lng)) {
+                    const marker = L.marker([lat, lng]).addTo(map);
+                    marker.bindPopup(`<strong>${escapeHtml(p.title)}</strong><br>${escapeHtml(p.address ?? '')}`);
+                    markers.push(marker);
+                }
             });
 
-            // تابع ساده برای فرار از کاراکترهای خطرناک در HTML
-            function escapeHtml(unsafe) {
-                return unsafe
-                    .replaceAll('&', '&amp;')
-                    .replaceAll('<', '&lt;')
-                    .replaceAll('>', '&gt;')
-                    .replaceAll('"', '&quot;')
-                    .replaceAll("'", '&#039;');
+            if (markers.length) {
+                const group = L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.2));
             }
+
+            function escapeHtml(text) {
+                if (!text) return '';
+                return String(text)
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#039;');
+            }
+        });
     </script>
 </x-filament::page>
