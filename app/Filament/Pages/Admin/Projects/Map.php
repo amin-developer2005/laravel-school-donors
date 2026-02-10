@@ -21,7 +21,7 @@ class Map extends Page
     public function mount(): void
     {
         $this->projects = Project::with('region')
-            ->select(['id', 'title', 'address', 'latitude', 'longitude'])
+            ->select(['id', 'title', 'address', 'latitude', 'longitude', 'start_year'])
             ->whereNotNull(['latitude', 'longitude'])
             ->get();
     }
