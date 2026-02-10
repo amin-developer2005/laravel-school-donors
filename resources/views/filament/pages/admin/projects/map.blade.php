@@ -1,9 +1,9 @@
 <x-filament::page>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    <link rel="stylesheet" href="{{ asset('css/leaflet/leaflet.css') }}"
           integrity="sha512-sA+e2mM3b3GfVw2r6kq1gE6ej8sa7bQ2G9Ki3wN2G8kk/3Gf2vF8EoFv4Jr2QSWwG3I2mXk3O1f7YQFhYk1YzQ=="
           crossorigin=""/>
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    <script src="{{ asset('js/leaflet/leaflet.js') }}"
             integrity="sha512-p8f4g8Yx8X1xqf3Yd+q3qT1r3l6r2rXyU5kz6J4d9s7s8b9bC6s2d3e4f5g6h7i8j9k0l1m2n3o4p5q6r7s8t9u=="
             crossorigin=""></script>
 
