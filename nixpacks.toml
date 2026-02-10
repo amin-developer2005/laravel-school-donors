@@ -1,0 +1,14 @@
+# مشخص کردن providerها برای پشتیبانی از PHP و Node همزمان (PHP اصلی باشه)
+providers = ['php', 'node']
+
+# فاز install: Nixpacks خودش composer install و npm ci رو هندل می‌کنه (بدون نیاز به تکرار در command)
+[phases.install]
+cmds = ['composer install --optimize-autoloader --no-dev', 'npm ci']
+
+# فاز build: ساخت assets و بهینه‌سازی Laravel/Filament
+[phases.build]
+cmds = ['npm run build', 'php artisan filament:upgrade', 'php artisan optimize', 'php artisan storage:link']
+
+# اگر نیاز به پکیج‌های اضافی سیستم داری (مثل برای اکستنشن‌ها)
+[phases.setup]
+nixPkgs = ['...', 'nodejs', 'npm']  # nodejs و npm رو اضافه کن اگر نیاز بود، اما معمولاً اتوماتیکه
